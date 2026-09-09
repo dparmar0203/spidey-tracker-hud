@@ -117,8 +117,8 @@ export default function WebSenseHUD({ overview }: { overview: OverviewStats }) {
             <span>SECTOR: MANHATTAN GRID</span>
           </div>
           <div className="ws-statusbar-center">
-            <h1 className="ws-glitch" data-text="WEB-SENSE">
-              WEB<em>-SENSE</em>
+            <h1 className="ws-glitch" data-text="SPIDEY TRACKER">
+              SPIDEY <em>TRACKER</em>
             </h1>
             <p>18-Month Sighting Archive</p>
           </div>
