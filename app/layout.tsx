@@ -28,7 +28,7 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: "Spidey Tracker",
+  title: "Spidey-Tracker",
   description:
     "A HUD-style tracker for 18 months of reported sightings of a masked vigilante swinging across a New York-inspired city.",
 };

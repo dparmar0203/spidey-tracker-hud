@@ -1,4 +1,4 @@
-# Spidey Tracker
+# Spidey-Tracker
 
 A HUD-style tracker for an 18-month, city-wide dataset of reported sightings of a masked
 vigilante swinging across a New York-inspired city — built with Next.js and backed by a live

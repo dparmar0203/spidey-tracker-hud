@@ -63,8 +63,8 @@
   pointer-events: none;
 }
 .websense .ws-tag-left {
-  top: 14px;
-  left: calc(50% - 300px);
+  top: -26px;
+  left: 14px;
   background: var(--ink);
   color: var(--hud-text);
   padding: 5px 14px;
@@ -75,8 +75,8 @@
   display: none;
 }
 .websense .ws-tag-badge {
-  top: 16px;
-  right: calc(50% - 300px);
+  top: -28px;
+  right: 14px;
   background: var(--hud-red);
   color: #fff;
   font-size: 12px;

@@ -50,7 +50,7 @@ export default function Sidebar() {
     <>
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border/60 bg-background/70 px-4 py-3 backdrop-blur-md md:hidden">
         <span className="font-heading text-xl tracking-wide text-primary">
-          Spidey Tracker
+          Spidey-Tracker
         </span>
         <button
           type="button"
@@ -71,7 +71,7 @@ export default function Sidebar() {
           <div className="relative flex h-full w-64 flex-col gap-6 bg-background/90 p-4 backdrop-blur-md border-r border-border/60">
             <div className="flex items-center justify-between">
               <span className="font-heading text-xl tracking-wide text-primary">
-                Spidey Tracker
+                Spidey-Tracker
               </span>
               <button
                 type="button"
@@ -90,7 +90,7 @@ export default function Sidebar() {
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-6 border-r border-border/60 bg-background/50 p-4 backdrop-blur-md md:flex">
         <div className="px-2 pt-2">
           <span className="font-heading text-2xl tracking-wide text-primary">
-            Spidey Tracker
+            Spidey-Tracker
           </span>
           <p className="mt-1 text-xs text-muted-foreground">
             Field intelligence, borough by borough.
