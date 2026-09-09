@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bangers, Bebas_Neue, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
+import CosmicBackground from "@/components/CosmicBackground";
 import "./globals.css";
 
 const plexSans = IBM_Plex_Sans({
@@ -38,9 +39,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`dark scroll-smooth ${plexSans.variable} ${jetbrainsMono.variable} ${bangers.variable} ${bebasNeue.variable}`}
     >
-      <body className="min-h-full flex bg-background text-foreground">
+      <body className="min-h-full flex text-foreground">
+        <CosmicBackground />
         <Sidebar />
-        <div className="min-h-screen min-w-0 w-full flex-1 flex flex-col">{children}</div>
+        <div className="relative z-10 min-h-screen min-w-0 w-full flex-1 flex flex-col">
+          {children}
+        </div>
       </body>
     </html>
   );

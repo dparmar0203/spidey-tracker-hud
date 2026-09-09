@@ -19,18 +19,6 @@
 
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    #050a1a 0%,
-    #0d1f52 20%,
-    #1c4fc4 36%,
-    #4a1f78 50%,
-    #a3123a 66%,
-    #e8203f 80%,
-    #12060a 100%
-  );
   padding: clamp(14px, 3vw, 34px);
   display: flex;
   flex-direction: column;
@@ -44,61 +32,6 @@
     animation: none !important;
     transition: none !important;
   }
-}
-
-.websense .ws-sun {
-  position: absolute;
-  top: 6%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.85), rgba(232, 32, 63, 0.4) 45%, transparent 72%);
-  filter: blur(2px);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.websense .ws-stars {
-  position: absolute;
-  inset: 0 0 55% 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1.4px);
-  background-size: 60px 60px, 90px 90px;
-  background-position: 0 0, 30px 20px;
-  opacity: 0.35;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.websense .ws-skyline {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 26%;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.websense .ws-vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(6, 3, 12, 0.55) 100%);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.websense .ws-halftone {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1.3px);
-  background-size: 6px 6px;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  z-index: 1;
 }
 
 .websense .ws-hud {
@@ -569,67 +502,6 @@
 .websense .ws-target-data dd.status-gold { color: var(--hud-gold); }
 .websense .ws-target-data dd.status-red { color: var(--hud-red); }
 
-.websense .ws-dial {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  padding: 6px 0 2px;
-  flex-wrap: wrap;
-  max-width: 1180px;
-  margin: 0 auto;
-  width: 100%;
-}
-.websense .ws-dial-btn {
-  position: relative;
-  width: 84px;
-  height: 84px;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  background: var(--panel-solid);
-  border: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: var(--hud-text-dim);
-  cursor: pointer;
-  transition: transform 0.15s ease, color 0.15s ease, background 0.15s ease;
-}
-.websense .ws-dial-btn svg {
-  width: 22px;
-  height: 22px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-}
-.websense .ws-dial-btn span {
-  font-family: var(--font-label);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-}
-.websense .ws-dial-btn:hover {
-  transform: translateY(-4px);
-}
-.websense .ws-dial-btn.active {
-  background: var(--hud-red);
-  color: #fff;
-  box-shadow: 0 0 24px -2px var(--hud-red-glow);
-  transform: translateY(-6px) scale(1.05);
-}
-.websense .ws-mode-hint {
-  position: relative;
-  z-index: 3;
-  margin: 0;
-  text-align: center;
-  font-family: var(--font-label);
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  color: var(--hud-text-dim);
-  min-height: 14px;
-}
-
 @media (max-width: 760px) {
   .websense .ws-main-grid {
     grid-template-columns: 1fr;
@@ -644,9 +516,5 @@
   .websense .ws-statusbar-left,
   .websense .ws-statusbar-right {
     align-items: center;
-  }
-  .websense .ws-dial-btn {
-    width: 70px;
-    height: 70px;
   }
 }

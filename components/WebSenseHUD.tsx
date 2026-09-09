@@ -1,22 +1,12 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { LayoutGrid, MapPinned, ListFilter, TrendingUp, Radar } from "lucide-react";
 import {
   getBoroughDetail,
   type BoroughSighting,
   type OverviewStats,
 } from "@/app/actions";
 import "@/app/hud.css";
-
-const NAV_ITEMS = [
-  { href: "/", label: "Web Scan", icon: LayoutGrid },
-  { href: "/boroughs", label: "Boroughs", icon: MapPinned },
-  { href: "/reports", label: "Reports", icon: ListFilter },
-  { href: "/trends", label: "Trends", icon: TrendingUp },
-  { href: "/map", label: "Web Map", icon: Radar },
-];
 
 const LAYOUT: Record<string, { x: number; y: number; isHub?: boolean }> = {
   Manhattan: { x: 300, y: 300, isHub: true },
@@ -63,7 +53,6 @@ function layoutCases(borough: string, sightings: BoroughSighting[]): PositionedC
 }
 
 export default function WebSenseHUD({ overview }: { overview: OverviewStats }) {
-  const router = useRouter();
   const [clock, setClock] = useState("00:00:00");
   const [totalDisplay, setTotalDisplay] = useState(0);
   const [rateDisplay, setRateDisplay] = useState(0);
@@ -118,27 +107,6 @@ export default function WebSenseHUD({ overview }: { overview: OverviewStats }) {
 
   return (
     <div className="websense">
-      <div className="ws-sun" />
-      <div className="ws-stars" />
-      <svg className="ws-skyline" viewBox="0 0 1200 220" preserveAspectRatio="none">
-        <polygon
-          fill="#0a0e1c"
-          points="0,220 0,140 40,140 40,110 80,110 80,150 120,150 120,90 160,90 160,60 175,60 175,40 190,40 190,60 205,60 205,150 250,150 250,120 300,120 300,160 340,160 340,100 380,100 380,70 420,70 420,150 460,150 460,130 500,130 500,170 540,170 540,90 570,90 570,50 585,50 585,30 600,30 600,50 615,50 615,90 650,90 650,160 700,160 700,110 740,110 740,140 780,140 780,80 820,80 820,60 830,60 830,45 840,45 840,60 850,60 850,150 900,150 900,120 950,120 950,170 1000,170 1000,100 1040,100 1040,70 1080,70 1080,150 1120,150 1120,130 1160,130 1160,180 1200,180 1200,220"
-        />
-        <rect x="185" y="20" width="10" height="20" fill="#0a0e1c" />
-        <rect x="580" y="20" width="10" height="20" fill="#0a0e1c" />
-        <g fill="#ffcf6b" opacity="0.85">
-          {[
-            [50, 120], [90, 125], [130, 105], [215, 100], [350, 115], [390, 85],
-            [470, 145], [660, 110], [750, 120], [860, 95], [910, 130], [1010, 115], [1090, 90],
-          ].map(([x, y]) => (
-            <rect key={`${x}-${y}`} x={x} y={y} width={5} height={6} />
-          ))}
-        </g>
-      </svg>
-      <div className="ws-vignette" />
-      <div className="ws-halftone" />
-
       <div className="ws-hud">
         <span className="ws-tag ws-tag-left">NEW YORK CITY // TONIGHT</span>
         <span className="ws-tag ws-tag-badge">● LIVE</span>
@@ -335,25 +303,6 @@ export default function WebSenseHUD({ overview }: { overview: OverviewStats }) {
             </div>
           </aside>
         </main>
-
-        <nav className="ws-dial">
-          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-            const active = href === "/";
-            return (
-              <button
-                key={href}
-                className={`ws-dial-btn ${active ? "active" : ""}`}
-                type="button"
-                disabled={active}
-                onClick={() => !active && router.push(href)}
-              >
-                <Icon strokeWidth={1.8} />
-                <span>{label}</span>
-              </button>
-            );
-          })}
-        </nav>
-        <p className="ws-mode-hint">Web Scan module online — live sighting map.</p>
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ const NAV_ITEMS = [
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   return (
-    <nav className="flex flex-col gap-1">
+    <nav className="flex flex-col gap-3">
       {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
         const active = pathname === href;
         return (
@@ -32,14 +32,10 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             key={href}
             href={href}
             onClick={onNavigate}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              active
-                ? "bg-primary/15 text-primary"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
+            className={`hex-nav-btn ${active ? "active" : ""}`}
           >
-            <Icon className="size-4" />
-            {label}
+            <Icon strokeWidth={1.8} />
+            <span className="font-label">{label}</span>
           </Link>
         );
       })}
@@ -52,9 +48,9 @@ export default function Sidebar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur md:hidden">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border/60 bg-background/70 px-4 py-3 backdrop-blur-md md:hidden">
         <span className="font-heading text-xl tracking-wide text-primary">
-          Spidey Tracker
+          Web-Sense
         </span>
         <button
           type="button"
@@ -72,10 +68,10 @@ export default function Sidebar() {
             className="absolute inset-0 bg-black/70"
             onClick={() => setOpen(false)}
           />
-          <div className="relative flex h-full w-64 flex-col gap-6 bg-background p-4 border-r border-border/60">
+          <div className="relative flex h-full w-64 flex-col gap-6 bg-background/90 p-4 backdrop-blur-md border-r border-border/60">
             <div className="flex items-center justify-between">
               <span className="font-heading text-xl tracking-wide text-primary">
-                Spidey Tracker
+                Web-Sense
               </span>
               <button
                 type="button"
@@ -91,7 +87,7 @@ export default function Sidebar() {
         </div>
       )}
 
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-6 border-r border-border/60 bg-background p-4 md:flex">
+      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-6 border-r border-border/60 bg-background/50 p-4 backdrop-blur-md md:flex">
         <div className="px-2 pt-2">
           <span className="font-heading text-2xl tracking-wide text-primary">
             Web-Sense
