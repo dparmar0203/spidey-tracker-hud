@@ -30,7 +30,8 @@ Marvel-branded assets (no logo, no suit-palette recreation).
 
 ## Data
 
-The dataset spans **January 2025 – June 2026** (~86,600 sightings) across the five NYC boroughs,
+Source: [Spidey Tracker: Spider-Man Dataset on Kaggle](https://www.kaggle.com/datasets/umuttuygurr/spidey-tracker-spiderman-dataset),
+loaded into Supabase. The dataset spans **January 2025 – June 2026** (~86,600 sightings) across the five NYC boroughs,
 with fields for report type, witness/source counts, tracker confidence, evidence flags, weather,
 and a labeled verification outcome (`verified`, `mistaken_identity`, `impersonator`,
 `social_media_hoax`, `duplicate_report`, `sensor_error`, `deliberate_fake`). It's served from a
