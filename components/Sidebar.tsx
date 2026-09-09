@@ -49,9 +49,6 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-
-  if (pathname === "/") return null;
 
   return (
     <>

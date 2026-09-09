@@ -2,12 +2,21 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { LayoutGrid, MapPinned, ListFilter, TrendingUp, Radar } from "lucide-react";
 import {
   getBoroughDetail,
   type BoroughSighting,
   type OverviewStats,
 } from "@/app/actions";
 import "@/app/hud.css";
+
+const NAV_ITEMS = [
+  { href: "/", label: "Web Scan", icon: LayoutGrid },
+  { href: "/boroughs", label: "Boroughs", icon: MapPinned },
+  { href: "/reports", label: "Reports", icon: ListFilter },
+  { href: "/trends", label: "Trends", icon: TrendingUp },
+  { href: "/map", label: "Web Map", icon: Radar },
+];
 
 const LAYOUT: Record<string, { x: number; y: number; isHub?: boolean }> = {
   Manhattan: { x: 300, y: 300, isHub: true },
@@ -51,42 +60,6 @@ function layoutCases(borough: string, sightings: BoroughSighting[]): PositionedC
     const status = statusInfo(s.verification_status);
     return { ...s, x, y, statusKey: status.key, statusLabel: status.label };
   });
-}
-
-function DialIcon({ mode }: { mode: "WEB" | "LOG" | "INTEL" | "ARCHIVE" }) {
-  if (mode === "WEB")
-    return (
-      <svg viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="8" />
-        <circle cx="12" cy="12" r="2.5" />
-        <line x1="12" y1="1" x2="12" y2="4" />
-        <line x1="12" y1="20" x2="12" y2="23" />
-        <line x1="1" y1="12" x2="4" y2="12" />
-        <line x1="20" y1="12" x2="23" y2="12" />
-      </svg>
-    );
-  if (mode === "LOG")
-    return (
-      <svg viewBox="0 0 24 24">
-        <line x1="4" y1="6" x2="20" y2="6" />
-        <line x1="4" y1="12" x2="20" y2="12" />
-        <line x1="4" y1="18" x2="14" y2="18" />
-      </svg>
-    );
-  if (mode === "INTEL")
-    return (
-      <svg viewBox="0 0 24 24">
-        <line x1="4" y1="20" x2="4" y2="10" />
-        <line x1="12" y1="20" x2="12" y2="4" />
-        <line x1="20" y1="20" x2="20" y2="14" />
-      </svg>
-    );
-  return (
-    <svg viewBox="0 0 24 24">
-      <rect x="3" y="7" width="18" height="14" rx="1" />
-      <path d="M3 7l2-4h14l2 4" />
-    </svg>
-  );
 }
 
 export default function WebSenseHUD({ overview }: { overview: OverviewStats }) {
@@ -364,24 +337,23 @@ export default function WebSenseHUD({ overview }: { overview: OverviewStats }) {
         </main>
 
         <nav className="ws-dial">
-          <button className="ws-dial-btn active" type="button">
-            <DialIcon mode="WEB" />
-            <span>Web</span>
-          </button>
-          <button className="ws-dial-btn" type="button" onClick={() => router.push("/reports")}>
-            <DialIcon mode="LOG" />
-            <span>Log</span>
-          </button>
-          <button className="ws-dial-btn" type="button" onClick={() => router.push("/trends")}>
-            <DialIcon mode="INTEL" />
-            <span>Intel</span>
-          </button>
-          <button className="ws-dial-btn" type="button" onClick={() => router.push("/boroughs")}>
-            <DialIcon mode="ARCHIVE" />
-            <span>Archive</span>
-          </button>
+          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+            const active = href === "/";
+            return (
+              <button
+                key={href}
+                className={`ws-dial-btn ${active ? "active" : ""}`}
+                type="button"
+                disabled={active}
+                onClick={() => !active && router.push(href)}
+              >
+                <Icon strokeWidth={1.8} />
+                <span>{label}</span>
+              </button>
+            );
+          })}
         </nav>
-        <p className="ws-mode-hint">WEB module online — live sighting map.</p>
+        <p className="ws-mode-hint">Web Scan module online — live sighting map.</p>
       </div>
     </div>
   );
