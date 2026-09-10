@@ -220,33 +220,32 @@
   mix-blend-mode: overlay;
 }
 
-/* ---------- hexagon sidebar nav ---------- */
-.hex-nav-btn {
-  position: relative;
-  display: flex;
+/* ---------- title screen menu buttons ---------- */
+.title-menu-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px 24px;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 32px;
+  clip-path: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
   background: var(--muted);
-  color: var(--muted-foreground);
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-.hex-nav-btn svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-.hex-nav-btn:hover {
-  background: color-mix(in oklch, var(--muted), var(--spidey-blue) 25%);
   color: var(--foreground);
+  font-family: var(--font-bebas);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
-.hex-nav-btn.active {
+.title-menu-btn:hover {
+  transform: translateY(-2px);
+  background: color-mix(in oklch, var(--muted), var(--spidey-blue) 25%);
+}
+.title-menu-btn.primary {
   background: var(--spidey-red);
   color: #fff;
-  box-shadow: 0 0 18px -4px color-mix(in oklch, var(--spidey-red), transparent 30%);
+  box-shadow: 0 0 26px -6px color-mix(in oklch, var(--spidey-red), transparent 25%);
+}
+.title-menu-btn.primary:hover {
+  background: var(--spidey-red);
+  filter: brightness(1.1);
 }

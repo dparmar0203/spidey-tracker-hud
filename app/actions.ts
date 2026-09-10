@@ -1,63 +1,37 @@
 "use server";
 
 import { supabase } from "@/lib/supabase";
-import {
-  BOROUGHS,
-  REPORT_TYPES,
-  VERIFICATION_STATUSES,
-  WEATHER_CONDITIONS,
-} from "@/lib/constants";
+import { BOROUGHS } from "@/lib/constants";
 
 const PAGE_SIZE = 15;
+const SUPABASE_PAGE_CAP = 1000;
 
-export type BoroughSighting = {
-  sighting_id: string;
-  timestamp: string;
-  district: string;
-  report_type: string;
-  witness_count: number;
-  unique_source_count: number;
-  latitude: number;
-  longitude: number;
-  verification_status: string;
-};
+/** Fetch every row of a table/query, paging past Supabase's 1000-row cap. */
+async function fetchAll<T>(
+  table: string,
+  columns: string,
+  order: string
+): Promise<T[]> {
+  const { count } = await supabase
+    .from(table)
+    .select("*", { count: "exact", head: true });
+  const total = count ?? 0;
+  const pages = Math.ceil(total / SUPABASE_PAGE_CAP);
 
-export type BoroughDetail = {
-  borough: string;
-  sightings: BoroughSighting[];
-  avgWitnessCount: number;
-  verifiedRate: number;
-};
+  const chunks = await Promise.all(
+    Array.from({ length: pages }, (_, i) => {
+      const from = i * SUPABASE_PAGE_CAP;
+      const to = from + SUPABASE_PAGE_CAP - 1;
+      return supabase.from(table).select(columns).order(order).range(from, to);
+    })
+  );
 
-export async function getBoroughDetail(
-  borough: string,
-  page: number = 0
-): Promise<BoroughDetail> {
-  const from = page * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
-
-  const { data } = await supabase
-    .from("sightings")
-    .select(
-      "sighting_id,timestamp,district,report_type,witness_count,unique_source_count,latitude,longitude,verification_status"
-    )
-    .eq("borough", borough)
-    .order("timestamp", { ascending: false })
-    .range(from, to);
-
-  const sightings = data ?? [];
-  const total = sightings.length;
-
-  const avgWitnessCount = total
-    ? sightings.reduce((sum, s) => sum + (s.witness_count ?? 0), 0) / total
-    : 0;
-
-  const verifiedRate = total
-    ? sightings.filter((s) => s.verification_status === "verified").length / total
-    : 0;
-
-  return { borough, sightings, avgWitnessCount, verifiedRate };
+  return chunks.flatMap((c) => (c.data as T[]) ?? []);
 }
+
+// ---------------------------------------------------------------------------
+// Overview (title screen)
+// ---------------------------------------------------------------------------
 
 export async function getBoroughCounts() {
   const counts = await Promise.all(
@@ -107,84 +81,21 @@ export async function getOverviewStats(): Promise<OverviewStats> {
   };
 }
 
-export type CategoryBreakdown = { key: string; count: number }[];
+// ---------------------------------------------------------------------------
+// Case Files — browsable, filterable individual sightings
+// ---------------------------------------------------------------------------
 
-export async function getReportTypeBreakdown(): Promise<CategoryBreakdown> {
-  return Promise.all(
-    REPORT_TYPES.map(async (key) => {
-      const { count } = await supabase
-        .from("sightings")
-        .select("*", { count: "exact", head: true })
-        .eq("report_type", key);
-      return { key, count: count ?? 0 };
-    })
-  );
-}
-
-export async function getVerificationBreakdown(): Promise<CategoryBreakdown> {
-  return Promise.all(
-    VERIFICATION_STATUSES.map(async (key) => {
-      const { count } = await supabase
-        .from("sightings")
-        .select("*", { count: "exact", head: true })
-        .eq("verification_status", key);
-      return { key, count: count ?? 0 };
-    })
-  );
-}
-
-export async function getWeatherBreakdown(): Promise<CategoryBreakdown> {
-  return Promise.all(
-    WEATHER_CONDITIONS.map(async (key) => {
-      const { count } = await supabase
-        .from("sightings")
-        .select("*", { count: "exact", head: true })
-        .eq("weather_condition", key);
-      return { key, count: count ?? 0 };
-    })
-  );
-}
-
-export type MonthlyTrendPoint = { month: string; total: number; verified: number };
-
-export async function getMonthlyTrend(): Promise<MonthlyTrendPoint[]> {
-  const months: { label: string; from: string; to: string }[] = [];
-  for (let i = 0; i < 18; i++) {
-    const from = new Date(Date.UTC(2025, i, 1));
-    const to = new Date(Date.UTC(2025, i + 1, 1));
-    months.push({
-      label: from.toLocaleString("en-US", {
-        month: "short",
-        year: "2-digit",
-        timeZone: "UTC",
-      }),
-      from: from.toISOString(),
-      to: to.toISOString(),
-    });
-  }
-
-  return Promise.all(
-    months.map(async ({ label, from, to }) => {
-      const [{ count: total }, { count: verified }] = await Promise.all([
-        supabase
-          .from("sightings")
-          .select("*", { count: "exact", head: true })
-          .gte("timestamp", from)
-          .lt("timestamp", to),
-        supabase
-          .from("sightings")
-          .select("*", { count: "exact", head: true })
-          .gte("timestamp", from)
-          .lt("timestamp", to)
-          .eq("verification_status", "verified"),
-      ]);
-      return { month: label, total: total ?? 0, verified: verified ?? 0 };
-    })
-  );
-}
-
-export type FilteredSighting = BoroughSighting & {
+export type FilteredSighting = {
+  sighting_id: string;
+  timestamp: string;
   borough: string;
+  district: string;
+  report_type: string;
+  witness_count: number;
+  unique_source_count: number;
+  latitude: number;
+  longitude: number;
+  verification_status: string;
   tracker_confidence: number;
   photo_evidence: boolean;
   video_evidence: boolean;
@@ -224,35 +135,133 @@ export async function getFilteredSightings(
   return { sightings: (data as FilteredSighting[]) ?? [], total: count ?? 0 };
 }
 
-export type MapSighting = {
-  sighting_id: string;
+// ---------------------------------------------------------------------------
+// Investigation — the full 86k-point dataset, pre-classified server-side
+// ---------------------------------------------------------------------------
+
+export type InvestigationPoint = {
+  lat: number;
+  lon: number;
+  borough: string;
+  district: string;
+  status: "verified" | "unclear" | "flagged";
+  lateNight: boolean;
+  firstOfDay: boolean;
+  lastOfDay: boolean;
+  clearWx: boolean;
+};
+
+export type DistrictInfo = {
+  district: string;
+  borough: string;
+  lat: number;
+  lon: number;
+  patrolActivity: number;
+  nightlife: number;
+};
+
+export type InvestigationData = {
+  points: InvestigationPoint[];
+  districts: DistrictInfo[];
+  totalCount: number;
+};
+
+function statusBucket(status: string): "verified" | "unclear" | "flagged" {
+  if (status === "verified") return "verified";
+  if (status === "impersonator" || status === "deliberate_fake") return "flagged";
+  return "unclear";
+}
+
+// Timestamps come back as "YYYY-MM-DD HH:MM:SS.ffffff" — sliced as plain
+// strings (never parsed into a Date) so there's no local-timezone reinterpretation.
+function dateOf(ts: string) {
+  return ts.slice(0, 10);
+}
+function hourOf(ts: string) {
+  return parseInt(ts.slice(11, 13), 10);
+}
+
+type RawSighting = {
   latitude: number;
   longitude: number;
   borough: string;
   district: string;
-  report_type: string;
-  witness_count: number;
   verification_status: string;
   timestamp: string;
 };
 
-export async function getMapSightings(borough?: string): Promise<MapSighting[]> {
-  const targets = borough ? [borough] : BOROUGHS;
-  const perBorough = borough ? 400 : 80;
+type RawWeather = { date: string; hour: number; condition: string };
 
-  const results = await Promise.all(
-    targets.map(async (b) => {
-      const { data } = await supabase
-        .from("sightings")
-        .select(
-          "sighting_id,latitude,longitude,borough,district,report_type,witness_count,verification_status,timestamp"
-        )
-        .eq("borough", b)
-        .order("timestamp", { ascending: false })
-        .limit(perBorough);
-      return data ?? [];
-    })
-  );
+export async function getInvestigationData(): Promise<InvestigationData> {
+  const [rawSightings, rawWeather, { data: rawLocations }] = await Promise.all([
+    fetchAll<RawSighting>(
+      "sightings",
+      "latitude,longitude,borough,district,verification_status,timestamp",
+      "timestamp"
+    ),
+    fetchAll<RawWeather>("weather", "date,hour,condition", "date"),
+    supabase
+      .from("locations")
+      .select("district,borough,centroid_lat,centroid_lon,patrol_activity_score,nightlife_score"),
+  ]);
 
-  return results.flat();
+  // date+hour -> condition, for the "clear visibility" filter
+  const weatherByKey = new Map<string, string>();
+  for (const w of rawWeather) {
+    weatherByKey.set(`${w.date}_${w.hour}`, w.condition);
+  }
+
+  // first/last sighting of each calendar date. Timestamps are fixed-width
+  // zero-padded strings, so plain string comparison is chronological order —
+  // no Date parsing needed.
+  const dayBounds = new Map<string, { minId: number; minTs: string; maxId: number; maxTs: string }>();
+  rawSightings.forEach((s, i) => {
+    const d = dateOf(s.timestamp);
+    const existing = dayBounds.get(d);
+    if (!existing) {
+      dayBounds.set(d, { minId: i, minTs: s.timestamp, maxId: i, maxTs: s.timestamp });
+    } else {
+      if (s.timestamp < existing.minTs) {
+        existing.minId = i;
+        existing.minTs = s.timestamp;
+      }
+      if (s.timestamp > existing.maxTs) {
+        existing.maxId = i;
+        existing.maxTs = s.timestamp;
+      }
+    }
+  });
+  const firstOfDayIndices = new Set<number>();
+  const lastOfDayIndices = new Set<number>();
+  for (const bounds of dayBounds.values()) {
+    firstOfDayIndices.add(bounds.minId);
+    lastOfDayIndices.add(bounds.maxId);
+  }
+
+  const points: InvestigationPoint[] = rawSightings.map((s, i) => {
+    const hour = hourOf(s.timestamp);
+    const condition = weatherByKey.get(`${dateOf(s.timestamp)}_${hour}`);
+    return {
+      lat: s.latitude,
+      lon: s.longitude,
+      borough: s.borough,
+      district: s.district,
+      status: statusBucket(s.verification_status),
+      lateNight: hour >= 22 || hour < 5,
+      firstOfDay: firstOfDayIndices.has(i),
+      lastOfDay: lastOfDayIndices.has(i),
+      clearWx: condition === "clear" || condition === "cloudy",
+    };
+  });
+
+  const districts: DistrictInfo[] = (rawLocations ?? []).map((l) => ({
+    district: l.district,
+    borough: l.borough,
+    lat: l.centroid_lat,
+    lon: l.centroid_lon,
+    patrolActivity: l.patrol_activity_score,
+    nightlife: l.nightlife_score,
+  }));
+
+  return { points, districts, totalCount: points.length };
 }

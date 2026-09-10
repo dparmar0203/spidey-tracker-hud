@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Bangers, Bebas_Neue, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
-import Sidebar from "@/components/Sidebar";
+import TopNav from "@/components/TopNav";
 import CosmicBackground from "@/components/CosmicBackground";
 import "./globals.css";
 
@@ -30,7 +30,7 @@ const bebasNeue = Bebas_Neue({
 export const metadata: Metadata = {
   title: "Spidey-Tracker",
   description:
-    "A HUD-style tracker for 18 months of reported sightings of a masked vigilante swinging across a New York-inspired city.",
+    "An open investigation into 18 months of reported sightings of a masked vigilante swinging across a New York-inspired city.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -39,9 +39,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`dark scroll-smooth ${plexSans.variable} ${jetbrainsMono.variable} ${bangers.variable} ${bebasNeue.variable}`}
     >
-      <body className="min-h-full flex flex-col md:flex-row text-foreground">
+      <body className="min-h-full flex flex-col text-foreground">
         <CosmicBackground />
-        <Sidebar />
+        <TopNav />
         <div className="relative z-10 min-h-screen min-w-0 w-full flex-1 flex flex-col">
           {children}
         </div>

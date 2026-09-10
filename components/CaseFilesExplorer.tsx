@@ -38,7 +38,7 @@ type Props = {
   initialTotal: number;
 };
 
-export default function ReportsExplorer({ initialSightings, initialTotal }: Props) {
+export default function CaseFilesExplorer({ initialSightings, initialTotal }: Props) {
   const [borough, setBorough] = useState(ALL);
   const [reportType, setReportType] = useState(ALL);
   const [verification, setVerification] = useState(ALL);
@@ -96,10 +96,10 @@ export default function ReportsExplorer({ initialSightings, initialTotal }: Prop
           onValueChange={(v) => resetAnd(() => setReportType(v as string))}
         >
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Report type" />
+            <SelectValue placeholder="Activity" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>All report types</SelectItem>
+            <SelectItem value={ALL}>All activity</SelectItem>
             {REPORT_TYPES.map((r) => (
               <SelectItem key={r} value={r} className="capitalize">
                 {r.replace(/_/g, " ")}
@@ -129,11 +129,11 @@ export default function ReportsExplorer({ initialSightings, initialTotal }: Prop
       <Card className="bg-card border-border/60">
         <CardHeader>
           <CardTitle className="font-heading text-2xl tracking-wide text-primary">
-            Field Reports
+            Open Case Files
           </CardTitle>
           <CardDescription>
-            {total.toLocaleString()} reports match these filters · Showing page{" "}
-            {page + 1} of {maxPage + 1}
+            {total.toLocaleString()} case files match these filters · Page {page + 1} of{" "}
+            {maxPage + 1}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -144,16 +144,14 @@ export default function ReportsExplorer({ initialSightings, initialTotal }: Prop
               ))}
             </div>
           ) : sightings.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No reports match these filters.
-            </p>
+            <p className="text-sm text-muted-foreground">No case files match these filters.</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Time</TableHead>
                   <TableHead>Borough</TableHead>
-                  <TableHead>Type</TableHead>
+                  <TableHead>Activity</TableHead>
                   <TableHead>Witnesses</TableHead>
                   <TableHead>Confidence</TableHead>
                   <TableHead>Evidence</TableHead>
@@ -188,9 +186,7 @@ export default function ReportsExplorer({ initialSightings, initialTotal }: Prop
                         {s.photo_evidence && <Camera className="size-3.5" />}
                         {s.video_evidence && <Video className="size-3.5" />}
                         {s.audio_evidence && <Mic className="size-3.5" />}
-                        {s.crime_nearby && (
-                          <TriangleAlert className="size-3.5 text-primary" />
-                        )}
+                        {s.crime_nearby && <TriangleAlert className="size-3.5 text-primary" />}
                       </div>
                     </TableCell>
                     <TableCell>
