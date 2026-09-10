@@ -39,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`dark scroll-smooth ${plexSans.variable} ${jetbrainsMono.variable} ${bangers.variable} ${bebasNeue.variable}`}
     >
-      <body className="min-h-full flex text-foreground">
+      <body className="min-h-full flex flex-col md:flex-row text-foreground">
         <CosmicBackground />
         <Sidebar />
         <div className="relative z-10 min-h-screen min-w-0 w-full flex-1 flex flex-col">

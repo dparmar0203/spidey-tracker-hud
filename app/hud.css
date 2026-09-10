@@ -92,10 +92,14 @@
   border: 2px dashed rgba(255, 255, 255, 0.6);
   transform: rotate(8deg);
   box-shadow: 0 0 20px var(--hud-red-glow);
+  display: none;
 }
 @media (min-width: 680px) {
   .websense .ws-tag-left {
     display: block;
+  }
+  .websense .ws-tag-badge {
+    display: flex;
   }
 }
 
@@ -516,5 +520,8 @@
   .websense .ws-statusbar-left,
   .websense .ws-statusbar-right {
     align-items: center;
+  }
+  .websense .ws-glitch {
+    font-size: clamp(26px, 9vw, 38px);
   }
 }
